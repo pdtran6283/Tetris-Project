@@ -3,34 +3,44 @@ public abstract class Tetrimino {
 
 	// Move Tetrimino Left One Unit
 	void Left() {
+		if (Boundaries()) return;
 		for (Point e : blocks) e.Left();
 	}
 
 	// Move Tetrimino Right One Unit
 	void Right() {
+		if (Boundaries()) return;
 		for (Point e : blocks) e.Right();
 	}
 
 	// Move Tetrimino Down One Unit
 	void Down() {
+		if (Boundaries()) return;
 		for (Point e : blocks) e.Down();
+	}
+
+	public boolean Boundaries() {
+		for (Point e : blocks)
+			if (e.getRow() <= 0 || e.getCol() <= 0) return true;
+		return false;
 	}
 
 	abstract void RotateClockwise();
 	abstract void RotateCounterClockwise();
 
 	// return random Tetrimino
-	// static Tetrimino RandomTetrimino() {
-	// 	switch ((int) (Math.random() * 7)) {
-	// 		case 0: return new Square();
-	// 		case 1: return new Line();
-	// 		case 2: return new LLeft();
-	// 		case 3: return new LRight();
-	// 		case 4: return new Tee();
-	//		case 5: return new LeftN();
-	//		case 6: return new RightN();
-	// 	}
-	// }
+	static Tetrimino RandomTetrimino() {
+		switch ((int) (Math.random() * 7)) {
+			case 0: return new Square();
+			case 1: return new Line();
+			case 2: return new LLeft();
+			case 3: return new LRight();
+			case 4: return new Tee();
+			case 5: return new LeftN();
+			case 6: return new RightN();
+			default: return new Square();
+		}
+	}
 }
 
 class Square extends Tetrimino {
@@ -49,7 +59,10 @@ class Square extends Tetrimino {
 	void RotateCounterClockwise() {};
 }
 
-abstract class Line extends Tetrimino {
+class Line extends Tetrimino {
+	// Oriented in the horizontal direction
+	private boolean orientUp = false;
+
 	public Line() {
 		/* Numbering Convention
 			0 1 2 3
@@ -59,9 +72,33 @@ abstract class Line extends Tetrimino {
 		blocks[2] = new Point(0, 2);
 		blocks[3] = new Point(0, 3);
 	}
+
+	void RotateClockwise() {
+		Point pivot = blocks[2];
+
+		if (orientUp) {
+			for (int i = 0; i < 4; i++) {
+				blocks[i] = blocks[i].subtract(pivot);
+				blocks[i].RotateClockwise();
+				blocks[i] = pivot.add(blocks[i]);
+			}
+		} else {
+			for (int i = 0; i < 4; i++) {
+				blocks[i] = blocks[i].subtract(pivot);
+				blocks[i].RotateCounterClockwise();
+				blocks[i] = pivot.add(blocks[i]);
+			}
+		}
+
+		orientUp = !orientUp;
+	}
+
+	void RotateCounterClockwise() {
+		RotateClockwise();
+	}
 }
 
-abstract class LRight extends Tetrimino {
+class LRight extends Tetrimino {
 	public LRight() {
 		/* Numbering Convention
 			0 1 2
@@ -72,9 +109,29 @@ abstract class LRight extends Tetrimino {
 		blocks[2] = new Point(0, 2);
 		blocks[3] = new Point(1, 0);
 	}
+
+	void RotateCounterClockwise() {
+		Point pivot = blocks[1];
+
+		for (int i = 0; i < 4; i++) {
+			blocks[i] = blocks[i].subtract(pivot);
+			blocks[i].RotateCounterClockwise();
+			blocks[i] = pivot.add(blocks[i]);
+		}
+	}
+
+	void RotateClockwise() {
+		Point pivot = blocks[1];
+
+		for (int i = 0; i < 4; i++) {
+			blocks[i] = blocks[i].subtract(pivot);
+			blocks[i].RotateClockwise();
+			blocks[i] = pivot.add(blocks[i]);
+		}
+	}
 }
 
-abstract class LLeft extends Tetrimino {
+class LLeft extends Tetrimino {
 	public LLeft() {
 		/* Numbering Convention
 			0 1 2
@@ -85,9 +142,29 @@ abstract class LLeft extends Tetrimino {
 		blocks[2] = new Point(0, 2);
 		blocks[3] = new Point(1, 2);
 	}
+
+	void RotateCounterClockwise() {
+		Point pivot = blocks[1];
+
+		for (int i = 0; i < 4; i++) {
+			blocks[i] = blocks[i].subtract(pivot);
+			blocks[i].RotateCounterClockwise();
+			blocks[i] = pivot.add(blocks[i]);
+		}
+	}
+
+	void RotateClockwise() {
+		Point pivot = blocks[1];
+
+		for (int i = 0; i < 4; i++) {
+			blocks[i] = blocks[i].subtract(pivot);
+			blocks[i].RotateClockwise();
+			blocks[i] = pivot.add(blocks[i]);
+		}
+	}
 }
 
-abstract class Tee extends Tetrimino {
+class Tee extends Tetrimino {
 	public Tee() {
 		/* Numbering Convention
 			0 1 2
@@ -98,9 +175,29 @@ abstract class Tee extends Tetrimino {
 		blocks[2] = new Point(0, 2);
 		blocks[3] = new Point(1, 1);
 	}
+
+	void RotateCounterClockwise() {
+		Point pivot = blocks[1];
+
+		for (int i = 0; i < 4; i++) {
+			blocks[i] = blocks[i].subtract(pivot);
+			blocks[i].RotateCounterClockwise();
+			blocks[i] = pivot.add(blocks[i]);
+		}
+	}
+
+	void RotateClockwise() {
+		Point pivot = blocks[1];
+
+		for (int i = 0; i < 4; i++) {
+			blocks[i] = blocks[i].subtract(pivot);
+			blocks[i].RotateClockwise();
+			blocks[i] = pivot.add(blocks[i]);
+		}
+	}
 }
 
-abstract class LeftN extends Tetrimino {
+class LeftN extends Tetrimino {
 	public LeftN() {
 		/* Numbering Convention
 			  0 1
@@ -111,9 +208,29 @@ abstract class LeftN extends Tetrimino {
 		blocks[2] = new Point(1, 0);
 		blocks[3] = new Point(1, 1);
 	}
+
+	void RotateCounterClockwise() {
+		Point pivot = blocks[0];
+
+		for (int i = 0; i < 4; i++) {
+			blocks[i] = blocks[i].subtract(pivot);
+			blocks[i].RotateCounterClockwise();
+			blocks[i] = pivot.add(blocks[i]);
+		}
+	}
+
+	void RotateClockwise() {
+		Point pivot = blocks[0];
+
+		for (int i = 0; i < 4; i++) {
+			blocks[i] = blocks[i].subtract(pivot);
+			blocks[i].RotateClockwise();
+			blocks[i] = pivot.add(blocks[i]);
+		}
+	}
 }
 
-abstract class RightN extends Tetrimino {
+class RightN extends Tetrimino {
 	public RightN() {
 		/* Numbering Convention
 			0 1
@@ -123,6 +240,26 @@ abstract class RightN extends Tetrimino {
 		blocks[1] = new Point(0, 1);
 		blocks[2] = new Point(1, 1);
 		blocks[3] = new Point(1, 2);
+	}
+
+	void RotateCounterClockwise() {
+		Point pivot = blocks[1];
+
+		for (int i = 0; i < 4; i++) {
+			blocks[i] = blocks[i].subtract(pivot);
+			blocks[i].RotateCounterClockwise();
+			blocks[i] = pivot.add(blocks[i]);
+		}
+	}
+
+	void RotateClockwise() {
+		Point pivot = blocks[1];
+
+		for (int i = 0; i < 4; i++) {
+			blocks[i] = blocks[i].subtract(pivot);
+			blocks[i].RotateClockwise();
+			blocks[i] = pivot.add(blocks[i]);
+		}
 	}
 }
 
@@ -153,5 +290,31 @@ class Point {
 
 	public int getCol() {
 		return col;
+	}
+
+	public void setRow(int r) {
+		row = r;
+	}
+
+	public void setCol(int c) {
+		col = c;
+	}
+
+	public Point add(Point a) {
+		return new Point(row + a.row, col + a.col);
+	}
+
+	public Point subtract(Point a) {
+		return new Point(row - a.row, col - a.col);
+	}
+
+	public void RotateCounterClockwise() {
+		row = -col;
+		col = row;
+	}
+
+	public void RotateClockwise() {
+		row = col;
+		col = -row;
 	}
 }
