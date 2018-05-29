@@ -1,35 +1,47 @@
 public abstract class Tetrimino {
+	int colorID;
 	Point[] blocks = new Point[4];
 
 	// Move Tetrimino Left One Unit
 	void Left() {
-		if (Boundaries()) return;
+		if (boundaries()) return;
 		for (Point e : blocks) e.Left();
 	}
 
 	// Move Tetrimino Right One Unit
 	void Right() {
-		if (Boundaries()) return;
+		if (boundaries()) return;
 		for (Point e : blocks) e.Right();
 	}
 
 	// Move Tetrimino Down One Unit
 	void Down() {
-		if (Boundaries()) return;
+		if (boundaries()) return;
 		for (Point e : blocks) e.Down();
 	}
 
-	public boolean Boundaries() {
-		for (Point e : blocks)
+	void Up() {
+		if (boundaries()) return;
+		for (Point e : blocks) e.Up();
+	}
+
+	public boolean boundaries() {
+		for (Point e : blocks) {
 			if (e.getRow() <= 0 || e.getCol() <= 0) return true;
+			if (e.getRow() >= 10 || e.getCol() >= 10) return true;
+		}
 		return false;
 	}
 
-	abstract void RotateClockwise();
-	abstract void RotateCounterClockwise();
+	public int getColorID() {
+		return colorID;
+	}
+
+	abstract void rotateClockwise();
+	abstract void rotateCounterClockwise();
 
 	// return random Tetrimino
-	static Tetrimino RandomTetrimino() {
+	static Tetrimino randomTetrimino() {
 		switch ((int) (Math.random() * 7)) {
 			case 0: return new Square();
 			case 1: return new Line();
@@ -38,7 +50,7 @@ public abstract class Tetrimino {
 			case 4: return new Tee();
 			case 5: return new LeftN();
 			case 6: return new RightN();
-			default: return new Square();
+			default: return randomTetrimino();
 		}
 	}
 }
@@ -53,10 +65,11 @@ class Square extends Tetrimino {
 		blocks[1] = new Point(0, 1);
 		blocks[2] = new Point(1, 0);
 		blocks[3] = new Point(1, 1);
+		colorID = 1;
 	}
 
-	void RotateClockwise() {};
-	void RotateCounterClockwise() {};
+	void rotateClockwise() {};
+	void rotateCounterClockwise() {};
 }
 
 class Line extends Tetrimino {
@@ -71,21 +84,22 @@ class Line extends Tetrimino {
 		blocks[1] = new Point(0, 1);
 		blocks[2] = new Point(0, 2);
 		blocks[3] = new Point(0, 3);
+		colorID = 2;
 	}
 
-	void RotateClockwise() {
+	void rotateClockwise() {
 		Point pivot = blocks[2];
 
 		if (orientUp) {
 			for (int i = 0; i < 4; i++) {
 				blocks[i] = blocks[i].subtract(pivot);
-				blocks[i].RotateClockwise();
+				blocks[i].rotateClockwise();
 				blocks[i] = pivot.add(blocks[i]);
 			}
 		} else {
 			for (int i = 0; i < 4; i++) {
 				blocks[i] = blocks[i].subtract(pivot);
-				blocks[i].RotateCounterClockwise();
+				blocks[i].rotateCounterClockwise();
 				blocks[i] = pivot.add(blocks[i]);
 			}
 		}
@@ -93,8 +107,8 @@ class Line extends Tetrimino {
 		orientUp = !orientUp;
 	}
 
-	void RotateCounterClockwise() {
-		RotateClockwise();
+	void rotateCounterClockwise() {
+		rotateClockwise();
 	}
 }
 
@@ -108,24 +122,25 @@ class LRight extends Tetrimino {
 		blocks[1] = new Point(0, 1);
 		blocks[2] = new Point(0, 2);
 		blocks[3] = new Point(1, 0);
+		colorID = 3;
 	}
 
-	void RotateCounterClockwise() {
+	void rotateCounterClockwise() {
 		Point pivot = blocks[1];
 
 		for (int i = 0; i < 4; i++) {
 			blocks[i] = blocks[i].subtract(pivot);
-			blocks[i].RotateCounterClockwise();
+			blocks[i].rotateCounterClockwise();
 			blocks[i] = pivot.add(blocks[i]);
 		}
 	}
 
-	void RotateClockwise() {
+	void rotateClockwise() {
 		Point pivot = blocks[1];
 
 		for (int i = 0; i < 4; i++) {
 			blocks[i] = blocks[i].subtract(pivot);
-			blocks[i].RotateClockwise();
+			blocks[i].rotateClockwise();
 			blocks[i] = pivot.add(blocks[i]);
 		}
 	}
@@ -141,24 +156,25 @@ class LLeft extends Tetrimino {
 		blocks[1] = new Point(0, 1);
 		blocks[2] = new Point(0, 2);
 		blocks[3] = new Point(1, 2);
+		colorID = 4;
 	}
 
-	void RotateCounterClockwise() {
+	void rotateCounterClockwise() {
 		Point pivot = blocks[1];
 
 		for (int i = 0; i < 4; i++) {
 			blocks[i] = blocks[i].subtract(pivot);
-			blocks[i].RotateCounterClockwise();
+			blocks[i].rotateCounterClockwise();
 			blocks[i] = pivot.add(blocks[i]);
 		}
 	}
 
-	void RotateClockwise() {
+	void rotateClockwise() {
 		Point pivot = blocks[1];
 
 		for (int i = 0; i < 4; i++) {
 			blocks[i] = blocks[i].subtract(pivot);
-			blocks[i].RotateClockwise();
+			blocks[i].rotateClockwise();
 			blocks[i] = pivot.add(blocks[i]);
 		}
 	}
@@ -174,24 +190,25 @@ class Tee extends Tetrimino {
 		blocks[1] = new Point(0, 1);
 		blocks[2] = new Point(0, 2);
 		blocks[3] = new Point(1, 1);
+		colorID = 5;
 	}
 
-	void RotateCounterClockwise() {
+	void rotateCounterClockwise() {
 		Point pivot = blocks[1];
 
 		for (int i = 0; i < 4; i++) {
 			blocks[i] = blocks[i].subtract(pivot);
-			blocks[i].RotateCounterClockwise();
+			blocks[i].rotateCounterClockwise();
 			blocks[i] = pivot.add(blocks[i]);
 		}
 	}
 
-	void RotateClockwise() {
+	void rotateClockwise() {
 		Point pivot = blocks[1];
 
 		for (int i = 0; i < 4; i++) {
 			blocks[i] = blocks[i].subtract(pivot);
-			blocks[i].RotateClockwise();
+			blocks[i].rotateClockwise();
 			blocks[i] = pivot.add(blocks[i]);
 		}
 	}
@@ -207,24 +224,25 @@ class LeftN extends Tetrimino {
 		blocks[1] = new Point(0, 2);
 		blocks[2] = new Point(1, 0);
 		blocks[3] = new Point(1, 1);
+		colorID = 6;
 	}
 
-	void RotateCounterClockwise() {
+	void rotateCounterClockwise() {
 		Point pivot = blocks[0];
 
 		for (int i = 0; i < 4; i++) {
 			blocks[i] = blocks[i].subtract(pivot);
-			blocks[i].RotateCounterClockwise();
+			blocks[i].rotateCounterClockwise();
 			blocks[i] = pivot.add(blocks[i]);
 		}
 	}
 
-	void RotateClockwise() {
+	void rotateClockwise() {
 		Point pivot = blocks[0];
 
 		for (int i = 0; i < 4; i++) {
 			blocks[i] = blocks[i].subtract(pivot);
-			blocks[i].RotateClockwise();
+			blocks[i].rotateClockwise();
 			blocks[i] = pivot.add(blocks[i]);
 		}
 	}
@@ -240,24 +258,25 @@ class RightN extends Tetrimino {
 		blocks[1] = new Point(0, 1);
 		blocks[2] = new Point(1, 1);
 		blocks[3] = new Point(1, 2);
+		colorID = 7;
 	}
 
-	void RotateCounterClockwise() {
+	void rotateCounterClockwise() {
 		Point pivot = blocks[1];
 
 		for (int i = 0; i < 4; i++) {
 			blocks[i] = blocks[i].subtract(pivot);
-			blocks[i].RotateCounterClockwise();
+			blocks[i].rotateCounterClockwise();
 			blocks[i] = pivot.add(blocks[i]);
 		}
 	}
 
-	void RotateClockwise() {
+	void rotateClockwise() {
 		Point pivot = blocks[1];
 
 		for (int i = 0; i < 4; i++) {
 			blocks[i] = blocks[i].subtract(pivot);
-			blocks[i].RotateClockwise();
+			blocks[i].rotateClockwise();
 			blocks[i] = pivot.add(blocks[i]);
 		}
 	}
@@ -284,6 +303,10 @@ class Point {
 		row++;
 	}
 
+	public void Up() {
+		row--;
+	}
+
 	public int getRow() {
 		return row;
 	}
@@ -308,12 +331,12 @@ class Point {
 		return new Point(row - a.row, col - a.col);
 	}
 
-	public void RotateCounterClockwise() {
+	public void rotateCounterClockwise() {
 		row = -col;
 		col = row;
 	}
 
-	public void RotateClockwise() {
+	public void rotateClockwise() {
 		row = col;
 		col = -row;
 	}
