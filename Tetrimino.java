@@ -1,34 +1,41 @@
 public abstract class Tetrimino {
 	int colorID;
 	Point[] blocks = new Point[4];
+	final int row = 22;
+	final int col = 10;
 
 	// Move Tetrimino Left One Unit
 	void Left() {
-		if (boundaries()) return;
-		for (Point e : blocks) e.Left();
+		for (Point e : blocks) 
+			e.Left();
+		if (outOfBounds()) 
+			for (Point e : blocks) e.Right();
 	}
 
 	// Move Tetrimino Right One Unit
 	void Right() {
-		if (boundaries()) return;
 		for (Point e : blocks) e.Right();
+		if (outOfBounds())
+			for (Point e : blocks) e.Left();
 	}
 
 	// Move Tetrimino Down One Unit
 	void Down() {
-		if (boundaries()) return;
 		for (Point e : blocks) e.Down();
+		// if (outOfBounds())
+			// for (Point e : blocks) e.Up();
 	}
 
 	void Up() {
-		if (boundaries()) return;
 		for (Point e : blocks) e.Up();
+		if (outOfBounds())
+			for (Point e : blocks) e.Down();
 	}
 
-	public boolean boundaries() {
+	public boolean outOfBounds() {
 		for (Point e : blocks) {
-			if (e.getRow() <= 0 || e.getCol() <= 0) return true;
-			if (e.getRow() >= 10 || e.getCol() >= 10) return true;
+			if (e.getRow() < 0 || e.getCol() < 0) return true;
+			if (e.getRow() >= row || e.getCol() >= col) return true;
 		}
 		return false;
 	}
@@ -53,6 +60,13 @@ public abstract class Tetrimino {
 			default: return randomTetrimino();
 		}
 	}
+
+	public String toString() {
+		String s = "";
+		for (Point e : blocks)
+			s += e + " ";
+		return s;
+	}
 }
 
 class Square extends Tetrimino {
@@ -61,10 +75,10 @@ class Square extends Tetrimino {
 			0 1
 			2 3
 		*/
-		blocks[0] = new Point(0, 0);
-		blocks[1] = new Point(0, 1);
-		blocks[2] = new Point(1, 0);
-		blocks[3] = new Point(1, 1);
+		blocks[0] = new Point(0, col / 2 - 1);
+		blocks[1] = new Point(0, col / 2);
+		blocks[2] = new Point(1, col / 2 - 1);
+		blocks[3] = new Point(1, col / 2);
 		colorID = 1;
 	}
 
@@ -80,10 +94,10 @@ class Line extends Tetrimino {
 		/* Numbering Convention
 			0 1 2 3
 		*/
-		blocks[0] = new Point(0, 0);
-		blocks[1] = new Point(0, 1);
-		blocks[2] = new Point(0, 2);
-		blocks[3] = new Point(0, 3);
+		blocks[0] = new Point(0, (col / 2) - 2);
+		blocks[1] = new Point(0, (col / 2) - 1);
+		blocks[2] = new Point(0, col / 2);
+		blocks[3] = new Point(0, (col / 2) + 1);
 		colorID = 2;
 	}
 
@@ -104,6 +118,8 @@ class Line extends Tetrimino {
 			}
 		}
 
+		if (outOfBounds()) rotateCounterClockwise();
+
 		orientUp = !orientUp;
 	}
 
@@ -118,10 +134,10 @@ class LRight extends Tetrimino {
 			0 1 2
 			3
 		*/
-		blocks[0] = new Point(0, 0);
-		blocks[1] = new Point(0, 1);
-		blocks[2] = new Point(0, 2);
-		blocks[3] = new Point(1, 0);
+		blocks[0] = new Point(0, (col / 2) - 1);
+		blocks[1] = new Point(0, col / 2);
+		blocks[2] = new Point(0, (col / 2) + 1);
+		blocks[3] = new Point(1, (col / 2) - 1);
 		colorID = 3;
 	}
 
@@ -133,6 +149,8 @@ class LRight extends Tetrimino {
 			blocks[i].rotateCounterClockwise();
 			blocks[i] = pivot.add(blocks[i]);
 		}
+
+		if (outOfBounds()) rotateClockwise();
 	}
 
 	void rotateClockwise() {
@@ -143,6 +161,8 @@ class LRight extends Tetrimino {
 			blocks[i].rotateClockwise();
 			blocks[i] = pivot.add(blocks[i]);
 		}
+
+		if (outOfBounds()) rotateCounterClockwise();
 	}
 }
 
@@ -152,10 +172,10 @@ class LLeft extends Tetrimino {
 			0 1 2
 			    3
 		*/
-		blocks[0] = new Point(0, 0);
-		blocks[1] = new Point(0, 1);
-		blocks[2] = new Point(0, 2);
-		blocks[3] = new Point(1, 2);
+		blocks[0] = new Point(0, (col / 2) - 1);
+		blocks[1] = new Point(0, col / 2);
+		blocks[2] = new Point(0, (col / 2) + 1);
+		blocks[3] = new Point(1, (col / 2) + 1);
 		colorID = 4;
 	}
 
@@ -167,6 +187,8 @@ class LLeft extends Tetrimino {
 			blocks[i].rotateCounterClockwise();
 			blocks[i] = pivot.add(blocks[i]);
 		}
+
+		if (outOfBounds()) rotateClockwise();
 	}
 
 	void rotateClockwise() {
@@ -177,6 +199,8 @@ class LLeft extends Tetrimino {
 			blocks[i].rotateClockwise();
 			blocks[i] = pivot.add(blocks[i]);
 		}
+
+		if (outOfBounds()) rotateCounterClockwise();
 	}
 }
 
@@ -186,10 +210,10 @@ class Tee extends Tetrimino {
 			0 1 2
 			  3
 		*/
-		blocks[0] = new Point(0, 0);
-		blocks[1] = new Point(0, 1);
-		blocks[2] = new Point(0, 2);
-		blocks[3] = new Point(1, 1);
+		blocks[0] = new Point(0, (col / 2) - 1);
+		blocks[1] = new Point(0, col / 2);
+		blocks[2] = new Point(0, (col / 2) + 1);
+		blocks[3] = new Point(1, col / 2);
 		colorID = 5;
 	}
 
@@ -201,6 +225,8 @@ class Tee extends Tetrimino {
 			blocks[i].rotateCounterClockwise();
 			blocks[i] = pivot.add(blocks[i]);
 		}
+
+		if (outOfBounds()) rotateClockwise();
 	}
 
 	void rotateClockwise() {
@@ -211,6 +237,8 @@ class Tee extends Tetrimino {
 			blocks[i].rotateClockwise();
 			blocks[i] = pivot.add(blocks[i]);
 		}
+
+		if (outOfBounds()) rotateCounterClockwise();
 	}
 }
 
@@ -220,10 +248,10 @@ class LeftN extends Tetrimino {
 			  0 1
 			2 3
 		*/
-		blocks[0] = new Point(0, 1);
-		blocks[1] = new Point(0, 2);
-		blocks[2] = new Point(1, 0);
-		blocks[3] = new Point(1, 1);
+		blocks[0] = new Point(0, col / 2);
+		blocks[1] = new Point(0, (col / 2) + 1);
+		blocks[2] = new Point(1, (col / 2) - 1);
+		blocks[3] = new Point(1, col / 2);
 		colorID = 6;
 	}
 
@@ -235,6 +263,8 @@ class LeftN extends Tetrimino {
 			blocks[i].rotateCounterClockwise();
 			blocks[i] = pivot.add(blocks[i]);
 		}
+
+		if (outOfBounds()) rotateClockwise();
 	}
 
 	void rotateClockwise() {
@@ -245,6 +275,8 @@ class LeftN extends Tetrimino {
 			blocks[i].rotateClockwise();
 			blocks[i] = pivot.add(blocks[i]);
 		}
+
+		if (outOfBounds()) rotateCounterClockwise();
 	}
 }
 
@@ -254,10 +286,10 @@ class RightN extends Tetrimino {
 			0 1
 			  2 3
 		*/
-		blocks[0] = new Point(0, 0);
-		blocks[1] = new Point(0, 1);
-		blocks[2] = new Point(1, 1);
-		blocks[3] = new Point(1, 2);
+		blocks[0] = new Point(0, (col / 2) - 1);
+		blocks[1] = new Point(0, col / 2);
+		blocks[2] = new Point(1, col / 2);
+		blocks[3] = new Point(1, (col / 2) + 1);
 		colorID = 7;
 	}
 
@@ -269,6 +301,8 @@ class RightN extends Tetrimino {
 			blocks[i].rotateCounterClockwise();
 			blocks[i] = pivot.add(blocks[i]);
 		}
+
+		if (outOfBounds()) rotateClockwise();
 	}
 
 	void rotateClockwise() {
@@ -279,6 +313,8 @@ class RightN extends Tetrimino {
 			blocks[i].rotateClockwise();
 			blocks[i] = pivot.add(blocks[i]);
 		}
+
+		if (outOfBounds()) rotateCounterClockwise();
 	}
 }
 
@@ -332,12 +368,18 @@ class Point {
 	}
 
 	public void rotateCounterClockwise() {
+		int temp = row;
 		row = -col;
-		col = row;
+		col = temp;
 	}
 
 	public void rotateClockwise() {
+		int temp = row;
 		row = col;
-		col = -row;
+		col = -temp;
+	}
+
+	public String toString() {
+		return "(" + row + "," + col + ")";
 	}
 }
